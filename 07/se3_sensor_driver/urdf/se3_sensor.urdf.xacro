@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="se3_sensors">
+    <!-- Import the se3_sensor_system macro -->
+    <xacro:include filename="$(find se3_sensor_driver)/urdf/se3_sensor.xacro"/>
+
+    <!-- Parameters that we can change at run time or in the launch file -->
+    <xacro:arg name="sensor_ip" default="192.168.1.100"/>
+    <xacro:arg name="robot_sensor_name" default="robot_sensor"/>
+    <xacro:arg name="robot_frame_id" default="robot_sensor_frame"/>
+    <xacro:arg name="target_sensor_name" default="target_sensor"/>
+    <xacro:arg name="target_frame_id" default="target_sensor_frame"/>
+
+    <!-- Adding the world link to make TF happy -->
+    <link name="world"/>
+    <link name="base_link"/>
+
+    <joint name="world_to_base_link" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </joint>      
+
+    <!-- Instantiation of the sensor system with both sensors -->
+    <xacro:se3_sensor_system
+        name="SE3SensorSystem"
+        ip_address="$(arg sensor_ip)"
+        robot_sensor_name="$(arg robot_sensor_name)"
+        robot_frame_id="$(arg robot_frame_id)"
+        target_sensor_name="$(arg target_sensor_name)"
+        target_frame_id="$(arg target_frame_id)"
+    />
+</robot>

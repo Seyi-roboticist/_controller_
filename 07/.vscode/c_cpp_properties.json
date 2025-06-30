@@ -1,0 +1,52 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/seyi/rsp_workspace/install/x4_interfaces/include/**",
+        "/home/seyi/rsp_workspace/install/tot_sensor/include/**",
+        "/home/seyi/rsp_workspace/install/rsp_week04/include/**",
+        "/home/seyi/rsp_workspace/install/rsp_week03/include/**",
+        "/home/seyi/rsp_workspace/install/rsp_week02/include/**",
+        "/home/seyi/rsp_workspace/install/rsp_msgs/include/**",
+        "/home/seyi/rsp_workspace/install/pnp_actionlib/include/**",
+        "/home/seyi/rsp_workspace/install/pnp_msgs/include/**",
+        "/home/seyi/rsp_workspace/install/assignment3/include/**",
+        "/home/seyi/rsp_workspace/install/assignment1_subpub/include/**",
+        "/home/seyi/rsp_workspace/install/assignment1_msgs/include/**",
+        "/home/seyi/install/tot_sensor/include/**",
+        "/home/seyi/install/rsp_week04/include/**",
+        "/home/seyi/install/rsp_week03/include/**",
+        "/home/seyi/install/rsp_week02/include/**",
+        "/home/seyi/install/rsp_msgs/include/**",
+        "/home/seyi/install/pnp_actionlib/include/**",
+        "/home/seyi/install/pnp_msgs/include/**",
+        "/home/seyi/install/assignment3/include/**",
+        "/home/seyi/install/assignment1_subpub/include/**",
+        "/home/seyi/install/assignment1_msgs/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/seyi/rsp_workspace/src/edumip_balance_ros_gazebo_plugin/include/**",
+        "/home/seyi/rsp_workspace/src/oafolay2/01/assignment1_subpub/include/**",
+        "/home/seyi/rsp_workspace/src/oafolay2/02/pnp_actionlib/include/**",
+        "/home/seyi/rsp_workspace/src/oafolay2/03/assignment3/include/**",
+        "/home/seyi/rsp_workspace/src/oafolay2/06/tot_sensor/include/**",
+        "/home/seyi/rsp_workspace/src/oafolay2/07/se3_sensor_driver/include/**",
+        "/home/seyi/rsp_workspace/src/rsp/rsp_week02/include/**",
+        "/home/seyi/rsp_workspace/src/rsp/rsp_week03/include/**",
+        "/home/seyi/rsp_workspace/src/rsp/rsp_week04/include/**",
+        "/home/seyi/rsp_workspace/src/rsp/rsp_week05/include/**",
+        "/home/seyi/rsp_workspace/src/rsp/rsp_week06/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

@@ -1,0 +1,15 @@
+{
+    "python.analysis.extraPaths": [
+        "/home/seyi/rsp_workspace/install/x4_interfaces/local/lib/python3.10/dist-packages",
+        "/home/seyi/rsp_workspace/install/rsp_week07/local/lib/python3.10/dist-packages",
+        "/home/seyi/rsp_workspace/install/rsp_msgs/local/lib/python3.10/dist-packages",
+        "/home/seyi/rsp_workspace/install/pnp_msgs/local/lib/python3.10/dist-packages",
+        "/home/seyi/rsp_workspace/install/assignment1_msgs/local/lib/python3.10/dist-packages",
+        "/home/seyi/install/rsp_msgs/local/lib/python3.10/dist-packages",
+        "/home/seyi/install/pnp_msgs/local/lib/python3.10/dist-packages",
+        "/home/seyi/install/bumperbot_py_examples/lib/python3.10/site-packages",
+        "/home/seyi/install/assignment1_msgs/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

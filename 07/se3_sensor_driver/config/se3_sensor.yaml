@@ -1,0 +1,29 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 10 
+
+    # We define our two pose broadcasters, one for the robot and the other for the target sensor 
+    robot_pose_broadcaster:
+      type: pose_broadcaster/PoseBroadcaster
+
+    target_pose_broadcaster:
+      type: pose_broadcaster/PoseBroadcaster
+
+# Configuration for the robot sensor pose broadcaster 
+robot_pose_broadcaster:
+  ros__parameters:
+    pose_name: "robot_sensor"
+    frame_id: "world"
+    tf:
+      enable: true
+      child_frame_id: "robot_sensor_frame"
+      publish_rate: 1.0
+
+target_pose_broadcaster: 
+  ros__parameters:
+    pose_name: "target_sensor"
+    frame_id: "world"
+    tf:
+      enable: true
+      child_frame_id: "target_sensor_frame"
+      publish_rate: 1.0

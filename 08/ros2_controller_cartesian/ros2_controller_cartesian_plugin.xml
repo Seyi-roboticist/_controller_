@@ -1,0 +1,9 @@
+<library path="ros2_controller_cartesian_plugin">
+  <class name="ros2_controller_cartesian/CartesianController"
+         type="ros2_controller_cartesian::CartesianController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>
+      A Cartesian controller that uses external sensor data to drive a robot toward a target position.
+    </description>
+  </class>
+</library>

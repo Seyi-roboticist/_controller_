@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<robot name="ur5e_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Define all arguments first before using them -->
+    <xacro:arg name="name" default="ur5_robot"/>
+    <xacro:arg name="ur_type" default="ur5"/>
+    <xacro:arg name="tf_prefix" default=""/>
+    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+    <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+    <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+    <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+    <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+    <xacro:arg name="safety_limits" default="true"/>
+    <xacro:arg name="safety_pos_margin" default="0.15"/>
+    <xacro:arg name="safety_k_position" default="20"/>
+    
+    <!-- Simulation Parameters - Define these before using -->
+    <xacro:arg name="use_fake_hardware" default="true"/>
+    <xacro:arg name="fake_sensor_commands" default="false"/>
+    <xacro:arg name="sim_gazebo" default="false"/>
+    <xacro:arg name="sim_ignition" default="false"/>
+    <xacro:arg name="sim_isaac" default="false"/>
+    <xacro:arg name="headless_mode" default="false"/>
+    
+    <!-- Sensor Parameters -->
+    <xacro:arg name="sensor_ip" default="192.168.1.100"/>
+    <xacro:arg name="robot_sensor_name" default="robot_sensor"/>
+    <xacro:arg name="robot_frame_id" default="robot_sensor_frame"/>
+    <xacro:arg name="target_sensor_name" default="target_sensor"/>
+    <xacro:arg name="target_frame_id" default="target_sensor_frame"/>
+    <xacro:arg name="ros_namespace" default=""/>
+    
+    <!-- Configuration file paths -->
+    <xacro:arg name="initial_positions_file" default="$(find ur5e_cartesian_control)/config/initial_positions.yaml"/>
+    <xacro:property name="initial_positions_file" value="$(arg initial_positions_file)"/>
+    <xacro:arg name="simulation_controllers" default="$(find ur5e_cartesian_control)/config/ur5e_controllers.yaml"/>
+    
+    <!-- Robot Connection Parameters -->
+    <xacro:arg name="robot_ip" default="172.22.22.2"/>
+    <xacro:arg name="script_filename" default=""/>
+    <xacro:arg name="output_recipe_filename" default=""/>
+    <xacro:arg name="input_recipe_filename" default=""/>
+    <xacro:arg name="reverse_ip" default="172.22.22.10"/>
+    <xacro:arg name="script_command_port" default="50004"/>
+    <xacro:arg name="reverse_port" default="50001"/> 
+    <xacro:arg name="script_sender_port" default="50002"/>
+    <xacro:arg name="trajectory_port" default="50003"/>
+
+    <!-- Tool Communication Related Parameters -->
+    <xacro:arg name="use_tool_communication" default="false"/>
+    <xacro:arg name="tool_voltage" default="0"/>
+    <xacro:arg name="tool_parity" default="0"/>
+    <xacro:arg name="tool_baud_rate" default="115200"/>
+    <xacro:arg name="tool_stop_bits" default="1"/>
+    <xacro:arg name="tool_rx_idle_chars" default="1.5"/>
+    <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
+    <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
+    <xacro:arg name="tool_tcp_port" default="54321"/>
+    <xacro:arg name="com_port" default="/dev/ttyUSB0"/>
+    <xacro:arg name="include_ros2_control" default="true"/>
+
+    <!-- Include the URDF for the UR robot -->
+    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+    <!-- Include the ros2_control macro -->
+    <xacro:include filename="$(find ur_description)/urdf/ur.ros2_control.xacro"/>
+    
+    <!-- Create link fixed to the world -->
+    <link name="world" />
+
+    <!-- Instantiate the UR robot macro -->
+    <xacro:ur_robot
+        name="$(arg name)"
+        tf_prefix="$(arg tf_prefix)"
+        parent="world"
+        joint_limits_parameters_file="$(arg joint_limit_params)"
+        kinematics_parameters_file="$(arg kinematics_params)"
+        physical_parameters_file="$(arg physical_params)"
+        visual_parameters_file="$(arg visual_params)"
+        transmission_hw_interface="$(arg transmission_hw_interface)"
+        safety_limits="$(arg safety_limits)"
+        safety_pos_margin="$(arg safety_pos_margin)"
+        safety_k_position="$(arg safety_k_position)"
+        use_fake_hardware="$(arg use_fake_hardware)"
+        fake_sensor_commands="$(arg fake_sensor_commands)"
+        sim_gazebo="$(arg sim_gazebo)"
+        sim_ignition="$(arg sim_ignition)"
+        headless_mode="$(arg headless_mode)"
+        initial_positions="${xacro.load_yaml(initial_positions_file)}"
+        use_tool_communication="$(arg use_tool_communication)"
+        tool_voltage="$(arg tool_voltage)"
+        tool_parity="$(arg tool_parity)"
+        tool_baud_rate="$(arg tool_baud_rate)"
+        tool_stop_bits="$(arg tool_stop_bits)"
+        tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
+        tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
+        tool_device_name="$(arg tool_device_name)"
+        tool_tcp_port="$(arg tool_tcp_port)"
+        robot_ip="$(arg robot_ip)"
+        script_filename="$(arg script_filename)"
+        output_recipe_filename="$(arg output_recipe_filename)"
+        input_recipe_filename="$(arg input_recipe_filename)"
+        reverse_ip="$(arg reverse_ip)"
+        script_command_port="$(arg script_command_port)"
+        reverse_port="$(arg reverse_port)"
+        script_sender_port="$(arg script_sender_port)"
+        trajectory_port="$(arg trajectory_port)">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:ur_robot>
+
+    <!-- Include SE3 sensor system macro -->
+    <xacro:include filename="$(find se3_sensor_driver)/urdf/se3_sensor.xacro"/>
+    <xacro:se3_sensor_system
+        name="SE3SensorSystem"
+        ip_address="$(arg sensor_ip)"
+        robot_sensor_name="$(arg robot_sensor_name)"
+        robot_frame_id="$(arg robot_frame_id)"
+        target_sensor_name="$(arg target_sensor_name)"
+        target_frame_id="$(arg target_frame_id)"
+    />
+
+    <gazebo>
+        <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+          <parameters>$(arg simulation_controllers)</parameters>
+          <ros>
+            <namespace></namespace>
+          </ros>
+        </plugin>
+    </gazebo>
+
+</robot>

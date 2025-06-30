@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library path="se3_sensor_plugin">
+    <class name="se3_sensor_driver/SE3SensorHardware"
+           type="se3_sensor_driver::SE3SensorHardware"
+           base_class_type="hardware_interface::SensorInterface">
+        <description>
+            SE3 Sensor hardware interface for ROS 2 Control to read 3D pose data.
+        </description>
+    </class>
+</library>
