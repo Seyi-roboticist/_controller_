@@ -1,10 +1,28 @@
-This is the README for folder 07
+# SE3 Sensor Driver
 
-In this assignment, we are working on the sensor interface instead of the system interface.
+Hardware interface for SE3 sensors in ROS 2 Control framework.
 
-The system interface of ROS2 control we worked on in class was meant to provide us with any/all of the controllers wiiht standardized access to a robot. So they have both the read and write intefaces (State and Command). 
+## Overview
 
-For our sensor interface of ROS2 control however, we are meant to only use read interface. 
+This package provides a sensor-only hardware interface that reads 3D pose data from external SE3 sensors via TCP/IP communication.
 
-Hardware sensor interface (2pt): 
+## Features
 
+- Real-time pose data acquisition
+- TF frame publishing
+- Socket-based communication
+- Multi-sensor support
+
+## Usage
+
+```bash
+ros2 launch se3_sensor_driver se3_sensor.launch.py
+```
+
+## Configuration
+
+See main project README for full configuration details.
+
+---
+
+Part of the [Cartesian Controller Project](../README.md)
