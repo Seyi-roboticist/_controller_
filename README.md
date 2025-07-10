@@ -18,6 +18,7 @@ This project implements a sophisticated control system that enables precise end-
 ## 🏗️ System Architecture
 
 ![System Architecture](docs/images/system_architecture.png)
+![UR5e Demo](media/ur5e.mp4)
 
 ### Data Flow Overview
 1. **SE3 Sensors** capture real-time robot and target poses
