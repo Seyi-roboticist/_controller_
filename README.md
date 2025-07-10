@@ -26,6 +26,13 @@ This project implements a sophisticated control system that enables precise end-
 4. **Cartesian Controller** computes inverse kinematics and joint velocities
 5. **UR5/UR5e Robot** executes precise end-effector positioning
 
+## 🎥 Live Demonstration
+
+[![Watch the demo](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+*Watch the UR5e robot performing real-time Cartesian position control using external SE3 sensor feedback*
+
+
 ### Package Organization
 
 ```
