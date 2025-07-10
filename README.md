@@ -18,7 +18,6 @@ This project implements a sophisticated control system that enables precise end-
 ## 🏗️ System Architecture
 
 ![System Architecture](docs/images/system_architecture.png)
-![UR5e Demo](media/ur5e.mp4)
 
 ### Data Flow Overview
 1. **SE3 Sensors** capture real-time robot and target poses
@@ -26,6 +25,15 @@ This project implements a sophisticated control system that enables precise end-
 3. **Hardware Interface** integrates sensor data into ROS 2 Control
 4. **Cartesian Controller** computes inverse kinematics and joint velocities
 5. **UR5/UR5e Robot** executes precise end-effector positioning
+
+## 🎥 Live Demonstration
+
+<video width="800" controls loop muted>
+  <source src="media/ur5e.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+*Watch the UR5e robot performing real-time Cartesian position control using external SE3 sensor feedback*
 
 ### Package Organization
 
