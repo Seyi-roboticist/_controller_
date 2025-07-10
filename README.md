@@ -33,6 +33,8 @@ This project implements a sophisticated control system that enables precise end-
   Your browser does not support the video tag.
 </video>
 
+**[▶️ Click here to view the demo video](media/ur5e.mp4)**
+
 *Watch the UR5e robot performing real-time Cartesian position control using external SE3 sensor feedback*
 
 ### Package Organization
