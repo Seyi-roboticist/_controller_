@@ -154,6 +154,13 @@ def generate_launch_description():
         condition=IfCondition(use_gazebo),
     )
 
+    tf_monitor_node = Node(
+        package="ur5e_cartesian_control", 
+        executable="two_positions_transform_monitor", 
+        name="tf_monitor",
+        output="screen"
+    )
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -165,6 +172,7 @@ def generate_launch_description():
 
     return LaunchDescription(declared_arguments + [
         robot_state_pub,
+        tf_monitor_node,
         static_transform_target,
         static_transform_sensor,
         static_transform_world_base,
