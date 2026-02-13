@@ -149,8 +149,8 @@ DeclareLaunchArgument("target_sensor_name", default_value="target_sensor")
 
 ### Performance Characteristics
 
-- **Update Rate**: 100 Hz control loop
-- **Position Accuracy**: ±5mm typical
+- **Update Rate**: 500 Hz control loop
+- **Position Accuracy**: ±0.7mm typical
 - **Convergence Time**: <3 seconds for 50cm movements
 - **Workspace**: Full UR5e operational envelope
 
