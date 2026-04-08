@@ -1,0 +1,183 @@
+# Tag Mapping Configuration: ROS 2 ↔ PLC
+#
+# This file defines the bidirectional mapping between ros2_control interface names
+# and PLC tag addresses. The mapping is protocol-agnostic — the same configuration
+# works with EtherNet/IP (Allen-Bradley) or OPC UA (Siemens, Beckhoff, etc.) by
+# using each platform's native tag naming convention.
+#
+# This configuration demonstrates a UR5e robot controlled through an Allen-Bradley
+# CompactLogix PLC, where the PLC handles safety monitoring and the ROS 2 layer
+# provides adaptive Cartesian control setpoints.
+#
+# Allen-Bradley tag naming: Program:MainProgram.TagName[index]
+# OPC UA equivalent:        ns=2;s=Robot.TagName[index]
+#
+# Author: Seyi R. Afolayan
+# License: MIT
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Joint Velocity Commands (ROS 2 → PLC)
+# ─────────────────────────────────────────────────────────────────────────────
+# These tags carry velocity setpoints from the ROS 2 Cartesian controller
+# to the PLC, which applies them to the robot drives after safety validation.
+
+tag_mappings:
+  # Shoulder Pan Joint
+  - ros2_interface: "shoulder_pan_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[0]"
+    joint_name: "shoulder_pan_joint"
+    interface_type: "velocity"
+    direction: "to_plc"
+    safety_class: "command"
+    scale: 1.0          # rad/s → rad/s (no conversion needed)
+    offset: 0.0
+
+  # Shoulder Lift Joint
+  - ros2_interface: "shoulder_lift_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[1]"
+    joint_name: "shoulder_lift_joint"
+    interface_type: "velocity"
+    direction: "to_plc"
+    safety_class: "command"
+    scale: 1.0
+    offset: 0.0
+
+  # Elbow Joint
+  - ros2_interface: "elbow_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[2]"
+    joint_name: "elbow_joint"
+    interface_type: "velocity"
+    direction: "to_plc"
+    safety_class: "command"
+    scale: 1.0
+    offset: 0.0
+
+  # Wrist 1 Joint
+  - ros2_interface: "wrist_1_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[3]"
+    joint_name: "wrist_1_joint"
+    interface_type: "velocity"
+    direction: "to_plc"
+    safety_class: "command"
+    scale: 1.0
+    offset: 0.0
+
+  # Wrist 2 Joint
+  - ros2_interface: "wrist_2_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[4]"
+    joint_name: "wrist_2_joint"
+    interface_type: "velocity"
+    direction: "to_plc"
+    safety_class: "command"
+    scale: 1.0
+    offset: 0.0
+
+  # Wrist 3 Joint
+  - ros2_interface: "wrist_3_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[5]"
+    joint_name: "wrist_3_joint"
+    interface_type: "velocity"
+    direction: "to_plc"
+    safety_class: "command"
+    scale: 1.0
+    offset: 0.0
+
+  # ─────────────────────────────────────────────────────────────────────────
+  #  Joint Position Feedback (PLC → ROS 2)
+  # ─────────────────────────────────────────────────────────────────────────
+  # These tags carry actual joint positions from the PLC (read from encoders)
+  # back to the ROS 2 controller for closed-loop control.
+
+  - ros2_interface: "shoulder_pan_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[0]"
+    joint_name: "shoulder_pan_joint"
+    interface_type: "position"
+    direction: "from_plc"
+    safety_class: "status"
+    scale: 1.0
+    offset: 0.0
+
+  - ros2_interface: "shoulder_lift_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[1]"
+    joint_name: "shoulder_lift_joint"
+    interface_type: "position"
+    direction: "from_plc"
+    safety_class: "status"
+    scale: 1.0
+    offset: 0.0
+
+  - ros2_interface: "elbow_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[2]"
+    joint_name: "elbow_joint"
+    interface_type: "position"
+    direction: "from_plc"
+    safety_class: "status"
+    scale: 1.0
+    offset: 0.0
+
+  - ros2_interface: "wrist_1_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[3]"
+    joint_name: "wrist_1_joint"
+    interface_type: "position"
+    direction: "from_plc"
+    safety_class: "status"
+    scale: 1.0
+    offset: 0.0
+
+  - ros2_interface: "wrist_2_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[4]"
+    joint_name: "wrist_2_joint"
+    interface_type: "position"
+    direction: "from_plc"
+    safety_class: "status"
+    scale: 1.0
+    offset: 0.0
+
+  - ros2_interface: "wrist_3_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[5]"
+    joint_name: "wrist_3_joint"
+    interface_type: "position"
+    direction: "from_plc"
+    safety_class: "status"
+    scale: 1.0
+    offset: 0.0
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Safety I/O Tags
+# ─────────────────────────────────────────────────────────────────────────────
+# These tags are monitored by the safety validator to enforce safe operation.
+# The PLC safety program has ultimate authority — these are read-only from
+# the ROS 2 side.
+
+safety_tags:
+  - plc_tag: "Safety:SafetyIO.EStop_Active"
+    safety_class: "safety_io"
+    description: "Emergency stop circuit status (true = E-stop active)"
+
+  - plc_tag: "Safety:SafetyIO.LightCurtain_Clear"
+    safety_class: "safety_io"
+    description: "Light curtain status (true = path clear)"
+
+  - plc_tag: "Program:MainProgram.ROS_Watchdog_OK"
+    safety_class: "safety_io"
+    description: "PLC-side watchdog status (true = ROS 2 heartbeat received)"
+
+  - plc_tag: "Program:MainProgram.ROS_Enable"
+    safety_class: "safety_io"
+    description: "PLC grants ROS 2 control authority (true = enabled)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Watchdog Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# The watchdog ensures communication integrity between ROS 2 and the PLC.
+# Both sides maintain independent watchdogs:
+#   - ROS 2 increments heartbeat_tag every control cycle
+#   - PLC monitors the heartbeat and sets watchdog_status_tag
+#   - If the PLC doesn't see heartbeat updates within timeout_ms,
+#     it zeroes robot outputs and enters safe state independently
+
+watchdog:
+  heartbeat_tag: "Program:MainProgram.ROS_Heartbeat"
+  watchdog_status_tag: "Program:MainProgram.ROS_Watchdog_OK"
+  timeout_ms: 500
+  enabled: true

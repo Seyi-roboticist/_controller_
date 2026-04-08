@@ -1,0 +1,11 @@
+<library path="plc_ros2_bridge_plugin">
+  <class name="plc_ros2_bridge/PLCHardwareInterface"
+         type="plc_ros2_bridge::PLCHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Vendor-neutral ros2_control hardware interface that bridges ROS 2 controllers
+      with PLC-governed industrial robots. Supports EtherNet/IP (Allen-Bradley) and
+      OPC UA (vendor-neutral) communication protocols with configurable safety validation.
+    </description>
+  </class>
+</library>

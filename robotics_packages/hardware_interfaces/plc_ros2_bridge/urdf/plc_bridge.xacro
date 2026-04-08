@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!--
+        PLC Bridge ros2_control macro
+        
+        Replaces direct robot hardware communication with PLC-mediated control.
+        The PLC retains safety authority while ROS 2 provides adaptive setpoints.
+        
+        Usage in a robot URDF:
+        
+        <xacro:plc_bridge_system
+            name="PLCBridge"
+            protocol="ethernet_ip"
+            ip_address="192.168.1.10"
+            slot="0"
+            tag_mapping_file="$(find ur5e_cartesian_control)/config/tag_mapping.yaml"
+            joints="shoulder_pan_joint shoulder_lift_joint elbow_joint
+                    wrist_1_joint wrist_2_joint wrist_3_joint"
+            command_interface="velocity"
+        />
+        
+        Author: Seyi R. Afolayan
+        License: MIT
+    -->
+
+    <xacro:macro name="plc_bridge_system" params="
+        name
+        protocol:=ethernet_ip
+        ip_address
+        slot:=0
+        port:=44818
+        timeout_ms:=1000
+        tag_mapping_file:=''
+        safety_config_file:=''
+        joints
+        command_interface:=velocity">
+
+        <ros2_control name="${name}" type="system">
+            <hardware>
+                <plugin>plc_ros2_bridge/PLCHardwareInterface</plugin>
+                <param name="protocol">${protocol}</param>
+                <param name="ip_address">${ip_address}</param>
+                <param name="slot">${slot}</param>
+                <param name="port">${port}</param>
+                <param name="timeout_ms">${timeout_ms}</param>
+                <param name="tag_mapping_file">${tag_mapping_file}</param>
+                <param name="safety_config_file">${safety_config_file}</param>
+            </hardware>
+
+            <!-- Generate joint interfaces from the space-separated joints list -->
+            <xacro:plc_bridge_joints joints="${joints}" command_interface="${command_interface}"/>
+        </ros2_control>
+    </xacro:macro>
+
+    <!-- Helper macro to generate joint interface declarations -->
+    <xacro:macro name="plc_bridge_joint" params="joint_name command_interface">
+        <joint name="${joint_name}">
+            <command_interface name="${command_interface}"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- Macro to iterate over joints (ROS 2 xacro doesn't have real loops,
+         so for a UR robot we enumerate explicitly) -->
+    <xacro:macro name="plc_bridge_joints_ur" params="tf_prefix:='' command_interface:=velocity">
+        <xacro:plc_bridge_joint joint_name="${tf_prefix}shoulder_pan_joint" command_interface="${command_interface}"/>
+        <xacro:plc_bridge_joint joint_name="${tf_prefix}shoulder_lift_joint" command_interface="${command_interface}"/>
+        <xacro:plc_bridge_joint joint_name="${tf_prefix}elbow_joint" command_interface="${command_interface}"/>
+        <xacro:plc_bridge_joint joint_name="${tf_prefix}wrist_1_joint" command_interface="${command_interface}"/>
+        <xacro:plc_bridge_joint joint_name="${tf_prefix}wrist_2_joint" command_interface="${command_interface}"/>
+        <xacro:plc_bridge_joint joint_name="${tf_prefix}wrist_3_joint" command_interface="${command_interface}"/>
+    </xacro:macro>
+
+</robot>
