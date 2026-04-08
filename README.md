@@ -1,10 +1,12 @@
-# Real-Time Cartesian Controller for UR5/UR5e Robots
+# Real-Time Cartesian Controller & Vendor-Neutral PLC Integration Bridge for UR5/UR5e Robots
 
-A professional-grade ROS 2 package for real-time Cartesian position control of Universal Robots manipulators using external SE3 sensor feedback and inverse kinematics.
+Real-time Cartesian controller and vendor-neutral PLC integration bridge for ROS 2 industrial robots, validated on UR5/UR5e manipulators. Features inverse kinematics with SE3 sensor feedback, and a configurable hardware interface supporting EtherNet/IP and OPC UA protocols for PLC-governed manufacturing cells.
 
 ## 🎯 Overview
 
 This project implements a sophisticated control system that enables precise end-effector positioning for UR5 and UR5e robots using external sensor data. The controller leverages inverse kinematics with damped pseudo-inverse Jacobian computation to achieve smooth, stable motion control.
+
+In addition, the project includes a **vendor-neutral PLC integration bridge** (`plc_ros2_bridge`) that enables the same ROS 2 control architecture to deploy across heterogeneous industrial PLC environments — Allen-Bradley via EtherNet/IP, Siemens/Beckhoff via OPC UA — without code changes. This package is **under active development**.
 
 ### Key Features
 
@@ -14,17 +16,40 @@ This project implements a sophisticated control system that enables precise end-
 - **Dynamic Target Setting**: Runtime target position updates via TF transforms
 - **Robust Inverse Kinematics**: SVD-based damped pseudo-inverse for numerical stability
 - **Professional Integration**: Full ROS 2 Control framework compliance
+- **Vendor-Neutral PLC Bridge** *(under development)*: Configurable `ros2_control` hardware interface supporting EtherNet/IP (Allen-Bradley) and OPC UA protocols
+- **Safety Validation Layer** *(under development)*: State machine, watchdog, and joint limit enforcement for safe ROS 2 ↔ PLC handoff
+- **YAML-Driven Tag Mapping** *(under development)*: Adapt to any PLC program without recompiling — change a config file, not code
 
 ## 🏗️ System Architecture
 
-![System Architecture](docs/images/system_architecture.png)
+### Architecture 1 — Real-Time Cartesian Control
 
-### Data Flow Overview
+![System Architecture 1](docs/images/system_architecture.png)
+
+End-to-end Cartesian position control using external SE3 sensor feedback and inverse kinematics:
+
 1. **SE3 Sensors** capture real-time robot and target poses
 2. **TF Lookup Server** bridges sensor data via TCP/IP sockets  
 3. **Hardware Interface** integrates sensor data into ROS 2 Control
 4. **Cartesian Controller** computes inverse kinematics and joint velocities
 5. **UR5/UR5e Robot** executes precise end-effector positioning
+
+### Architecture 2 — Full System with Vendor-Neutral PLC Integration *(Under Development)*
+
+![System Architecture 2](docs/images/system_architecture_2.png)
+
+Extends Architecture 1 with a PLC integration bridge, enabling the same Cartesian controller to deploy in PLC-governed manufacturing cells:
+
+1. **SE3 Sensors** capture real-time robot and target poses
+2. **TF Lookup Server** bridges sensor data via TCP/IP sockets
+3. **Hardware Interface** integrates sensor data into ROS 2 Control
+4. **Cartesian Controller** computes inverse kinematics and joint velocities
+5. **PLC Bridge** *(under development)* translates joint commands to PLC tags via EtherNet/IP or OPC UA
+6. **Safety Validator** *(under development)* enforces joint limits, watchdog, and E-stop monitoring
+7. **Industrial PLC** retains ultimate safety authority over robot drives
+8. **UR5/UR5e Robot** executes precise end-effector positioning
+
+> **Note:** The Cartesian controller code is identical in both architectures. Only the hardware interface plugin changes — from direct robot communication to PLC-mediated control. This is the vendor-neutral, reusable pattern at the core of this project.
 
 ## 🎥 Live Demonstration
 
@@ -45,7 +70,20 @@ This project implements a sophisticated control system that enables precise end-
 ```
 robotics_packages/
 ├── hardware_interfaces/
-│   └── se3_sensor_driver/          # SE3 sensor hardware interface
+│   ├── se3_sensor_driver/          # SE3 sensor hardware interface
+│   └── plc_ros2_bridge/            # Vendor-neutral PLC integration (under development)
+│       ├── include/
+│       │   └── plc_ros2_bridge/
+│       │       ├── plc_interface.hpp           # Abstract vendor-neutral PLC interface
+│       │       ├── ethernet_ip_interface.hpp    # EtherNet/IP (Allen-Bradley) implementation
+│       │       ├── opcua_interface.hpp          # OPC UA (vendor-neutral) implementation
+│       │       ├── safety_validator.hpp         # Safety validation state machine
+│       │       ├── tag_registry.hpp             # ROS 2 ↔ PLC tag mapping
+│       │       └── plc_hardware_interface.hpp   # ros2_control SystemInterface
+│       ├── src/
+│       ├── config/
+│       ├── urdf/
+│       └── doc/
 ├── controllers/
 │   └── cartesian_controller/       # Core Cartesian control algorithms
 └── applications/
@@ -79,6 +117,11 @@ robotics_packages/
    ```bash
    colcon build --packages-select se3_sensor_driver ros2_controller_cartesian ur5e_cartesian_control
    source install/setup.bash
+   ```
+
+   To also build the PLC bridge *(under development)*:
+   ```bash
+   colcon build --packages-select plc_ros2_bridge
    ```
 
 ### Basic Usage
@@ -136,6 +179,77 @@ DeclareLaunchArgument("sensor_ip", default_value="192.168.1.100")
 DeclareLaunchArgument("robot_sensor_name", default_value="robot_sensor")
 DeclareLaunchArgument("target_sensor_name", default_value="target_sensor")
 ```
+
+## 🔌 PLC Integration Bridge *(Under Active Development)*
+
+The `plc_ros2_bridge` package provides a vendor-neutral `ros2_control` hardware interface that enables ROS 2 controllers to send commands to and receive feedback from industrial PLCs.
+
+### Architecture
+
+```
+ROS 2 Controller → PLCHardwareInterface → SafetyValidator → PLCInterface → PLC → Robot
+                   (ros2_control)          (defense-in-depth)  (EtherNet/IP    (safety
+                                                                or OPC UA)     authority)
+```
+
+The Cartesian controller code is **unchanged** regardless of whether commands go directly to the robot or through a PLC — only the hardware interface plugin swaps. This is the reusable, vendor-neutral pattern that enables deployment across heterogeneous factory floors.
+
+### Supported Protocols
+
+| Protocol | Target PLCs | Status |
+|----------|------------|--------|
+| **EtherNet/IP (CIP)** | Allen-Bradley ControlLogix, CompactLogix | Reference implementation |
+| **OPC UA** | Siemens S7-1500, Beckhoff TwinCAT 3, B&R, Omron | Structural implementation |
+| **Modbus TCP** | Legacy systems | Planned |
+
+### Key Components
+
+- **`PLCInterface`** — Abstract vendor-neutral interface defining the read/write/connect contract for PLC communication
+- **`EtherNetIPInterface`** — Reference implementation for Allen-Bradley controllers using CIP over TCP/IP
+- **`OPCUAInterface`** — Vendor-neutral implementation for OPC UA-enabled controllers
+- **`SafetyValidator`** — State machine (IDLE → OPERATIONAL → ESTOP → FAULT) with watchdog timer and joint limit enforcement
+- **`TagRegistry`** — Bidirectional ROS 2 ↔ PLC tag mapping loaded from YAML configuration
+- **`PLCHardwareInterface`** — The `ros2_control::SystemInterface` that ties everything together
+
+### PLC Bridge Configuration *(Under Development)*
+
+Tag mappings are defined in YAML, enabling deployment to different PLC programs without code changes:
+
+```yaml
+tag_mappings:
+  - ros2_interface: "shoulder_pan_joint/velocity"
+    plc_tag: "Program:MainProgram.ROS_JointVelCmd[0]"
+    direction: "to_plc"
+    safety_class: "command"
+
+  - ros2_interface: "shoulder_pan_joint/position"
+    plc_tag: "Program:MainProgram.ROS_JointPosFb[0]"
+    direction: "from_plc"
+    safety_class: "status"
+
+watchdog:
+  heartbeat_tag: "Program:MainProgram.ROS_Heartbeat"
+  timeout_ms: 500
+```
+
+### Safety Methodology
+
+The PLC retains ultimate safety authority at all times. The `SafetyValidator` provides defense-in-depth from the ROS 2 side — it validates commands before they reach the PLC but does not replace PLC-based safety functions running on SIL-rated hardware.
+
+For the complete safety methodology, see [`doc/SAFETY_METHODOLOGY.md`](robotics_packages/hardware_interfaces/plc_ros2_bridge/doc/SAFETY_METHODOLOGY.md).
+
+### Development Roadmap
+
+- [x] Abstract `PLCInterface` with vendor-neutral contract
+- [x] EtherNet/IP (CIP) reference implementation
+- [x] OPC UA structural implementation
+- [x] Safety validation interface and state machine design
+- [x] YAML-driven tag registry
+- [x] `ros2_control` SystemInterface integration
+- [ ] Integration testing with Allen-Bradley CompactLogix hardware
+- [ ] OPC UA integration with open62541 stack
+- [ ] Modbus TCP implementation
+- [ ] End-to-end validation with UR5e through PLC
 
 ## 📊 Technical Details
 
